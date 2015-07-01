@@ -3,6 +3,7 @@ defmodule Dj54bApiPhoenix.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :cors
   end
 
   scope "/", Dj54bApiPhoenix do
@@ -14,5 +15,12 @@ defmodule Dj54bApiPhoenix.Router do
     get "/up", SpotifyController, :up
     get "/down", SpotifyController, :down
     get "/info", SpotifyController, :info
+    options "*path", SpotifyController, :options
+  end
+
+  def cors(conn, _params) do
+    conn
+    |> put_resp_header("access-control-allow-origin", "*")
+    |> put_resp_header("access-control-allow-methods", "GET, PUT, HEAD, OPTIONS")
   end
 end
