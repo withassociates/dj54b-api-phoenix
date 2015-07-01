@@ -36,8 +36,7 @@ defmodule Dj54bApiPhoenix.SpotifyController do
   end
 
   defp volume do
-    {result,_} = spotify_tell("get sound volume") |> Integer.parse
-    result
+    spotify_tell("get sound volume") |> parse_volume
   end
 
   defp spotify_info do
@@ -46,7 +45,7 @@ defmodule Dj54bApiPhoenix.SpotifyController do
     [volume, state, id, name, artist] = String.split(value, "|")
 
     %{
-      volume: volume,
+      volume: parse_volume(volume),
       state: state,
       track: %{
         id: id,
@@ -59,5 +58,10 @@ defmodule Dj54bApiPhoenix.SpotifyController do
   defp spotify_tell(instruction) do
     {value,_} = cmd("osascript", ["-e", ~s[tell application "Spotify" to #{instruction}]])
     String.strip(value)
+  end
+
+  defp parse_volume(str) do
+    {result,_} = Integer.parse(str)
+    result
   end
 end
