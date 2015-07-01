@@ -2,6 +2,31 @@ defmodule Dj54bApiPhoenix.SpotifyController do
   import System, only: [cmd: 2]
   use Dj54bApiPhoenix.Web, :controller
 
+  def play(conn, _params) do
+    spotify_tell("play")
+    info(conn, _params)
+  end
+
+  def pause(conn, _params) do
+    spotify_tell("pause")
+    info(conn, _params)
+  end
+
+  def next(conn, _params) do
+    spotify_tell("next track")
+    info(conn, _params)
+  end
+
+  def up(conn, _params) do
+    spotify_set("sound volume", volume + 6)
+    info(conn, _params)
+  end
+
+  def down(conn, _params) do
+    spotify_set("sound volume", volume - 4)
+    info(conn, _params)
+  end
+
   def info(conn, _params) do
     json conn, %{
       volume: volume,
@@ -11,7 +36,8 @@ defmodule Dj54bApiPhoenix.SpotifyController do
   end
 
   def volume do
-    spotify_get("sound volume")
+    {result,_} = spotify_get("sound volume") |> Integer.parse
+    result
   end
 
   def state do
@@ -39,7 +65,15 @@ defmodule Dj54bApiPhoenix.SpotifyController do
   end
 
   defp spotify_get(attr) do
-    {value,_} = cmd("osascript", ["-e", "tell application \"Spotify\" to get #{attr}"])
+    spotify_tell("get #{attr}")
+  end
+
+  defp spotify_set(attr, value) do
+    spotify_tell("set the #{attr} to #{value}")
+  end
+
+  defp spotify_tell(instruction) do
+    {value,_} = cmd("osascript", ["-e", "tell application \"Spotify\" to #{instruction}"])
     String.strip(value)
   end
 end
