@@ -28,11 +28,15 @@ defmodule Dj54bApiPhoenix.SpotifyController do
   end
 
   def info(conn, _params) do
-    json conn, %{
+    json(conn, %{
       volume: volume,
       state: state,
       track: track
-    }
+    })
+  end
+
+  def options(conn, _params) do
+    text(conn, "")
   end
 
   defp volume do
