@@ -18,21 +18,17 @@ defmodule Dj54bApiPhoenix.SpotifyController do
   end
 
   def up(conn, _params) do
-    spotify_set("sound volume", volume + 6)
+    spotify_tell("set the sound volume to #{volume + 6}")
     info(conn, _params)
   end
 
   def down(conn, _params) do
-    spotify_set("sound volume", volume - 4)
+    spotify_tell("set the sound volume to #{volume - 4}")
     info(conn, _params)
   end
 
   def info(conn, _params) do
-    json(conn, %{
-      volume: volume,
-      state: state,
-      track: track
-    })
+    json(conn, spotify_info)
   end
 
   def options(conn, _params) do
@@ -40,44 +36,28 @@ defmodule Dj54bApiPhoenix.SpotifyController do
   end
 
   defp volume do
-    {result,_} = spotify_get("sound volume") |> Integer.parse
+    {result,_} = spotify_tell("get sound volume") |> Integer.parse
     result
   end
 
-  defp state do
-    spotify_get("player state")
-  end
+  defp spotify_info do
+    value = spotify_tell(~s["" & (get sound volume) & "|" & (get player state) & "|" & (get the spotify url of the current track) & "|" & (get the name of the current track) & "|" & (get the artist of the current track)])
 
-  defp track do
+    [volume, state, id, name, artist] = String.split(value, "|")
+
     %{
-      id: track_id,
-      name: track_name,
-      artist: track_artist
+      volume: volume,
+      state: state,
+      track: %{
+        id: id,
+        name: name,
+        artist: artist
+      }
     }
   end
 
-  defp track_id do
-    spotify_get("the current track's spotify url")
-  end
-
-  defp track_name do
-    spotify_get("the current track's name")
-  end
-
-  defp track_artist do
-    spotify_get("the current track's artist")
-  end
-
-  defp spotify_get(attr) do
-    spotify_tell("get #{attr}")
-  end
-
-  defp spotify_set(attr, value) do
-    spotify_tell("set the #{attr} to #{value}")
-  end
-
   defp spotify_tell(instruction) do
-    {value,_} = cmd("osascript", ["-e", "tell application \"Spotify\" to #{instruction}"])
+    {value,_} = cmd("osascript", ["-e", ~s[tell application "Spotify" to #{instruction}]])
     String.strip(value)
   end
 end
