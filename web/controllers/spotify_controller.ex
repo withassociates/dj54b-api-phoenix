@@ -35,16 +35,16 @@ defmodule Dj54bApiPhoenix.SpotifyController do
     }
   end
 
-  def volume do
+  defp volume do
     {result,_} = spotify_get("sound volume") |> Integer.parse
     result
   end
 
-  def state do
+  defp state do
     spotify_get("player state")
   end
 
-  def track do
+  defp track do
     %{
       id: track_id,
       name: track_name,
@@ -52,7 +52,7 @@ defmodule Dj54bApiPhoenix.SpotifyController do
     }
   end
 
-  def track_id do
+  defp track_id do
     spotify_get("the current track's spotify url")
   end
 
