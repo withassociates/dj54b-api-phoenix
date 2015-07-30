@@ -15,6 +15,8 @@ defmodule Dj54bApiPhoenix.Router do
     get "/up", SpotifyController, :up
     get "/down", SpotifyController, :down
     get "/info", SpotifyController, :info
+    get "/peace", SpotifyController, :peace
+    get "/war", SpotifyController, :war
     options "*path", SpotifyController, :options
   end
 
