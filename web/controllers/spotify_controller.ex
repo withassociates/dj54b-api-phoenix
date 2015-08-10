@@ -85,10 +85,20 @@ defmodule Dj54bApiPhoenix.SpotifyController do
         peace_remaining = peace_max - peace_elapsed
 
         if peace_remaining > 0 do
+          track_info = spotify_info
+          peace_info = %{
+            volume: track_info[:volume],
+            state: track_info[:state],
+            track: %{
+              id: track_info[:id],
+              name: "Peace",
+              artist: "#{peace_remaining} seconds of peace remaining"
+            }
+          }
           conn
           |> halt
-          |> put_status(418)
-          |> text("#{peace_remaining} seconds of peace remaining")
+          |> put_status(200)
+          |> json(peace_info)
         else
           conn
         end
