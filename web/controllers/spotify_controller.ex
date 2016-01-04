@@ -20,12 +20,14 @@ defmodule Dj54bApiPhoenix.SpotifyController do
   end
 
   def up(conn, _params) do
-    spotify_tell("set the sound volume to #{volume + 6}")
+    new_volume = min(volume + 6, 100)
+    spotify_tell("set the sound volume to #{new_volume}")
     info(conn, _params)
   end
 
   def down(conn, _params) do
-    spotify_tell("set the sound volume to #{volume - 4}")
+    new_volume = max(0, volume - 4)
+    spotify_tell("set the sound volume to #{new_volume}")
     info(conn, _params)
   end
 
